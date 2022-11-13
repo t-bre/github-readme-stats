@@ -1,17 +1,19 @@
-require("dotenv").config();
-const {
-  renderError,
-  parseBoolean,
-  parseArray,
+import * as dotenv from "dotenv";
+import { renderStatsCard } from "../src/cards/stats-card.js";
+import { blacklist } from "../src/common/blacklist.js";
+import {
   clampValue,
   CONSTANTS,
-} = require("../src/common/utils");
-const fetchStats = require("../src/fetchers/stats-fetcher");
-const renderStatsCard = require("../src/cards/stats-card");
-const blacklist = require("../src/common/blacklist");
-const { isLocaleAvailable } = require("../src/translations");
+  parseArray,
+  parseBoolean,
+  renderError,
+} from "../src/common/utils.js";
+import { fetchStats } from "../src/fetchers/stats-fetcher.js";
+import { isLocaleAvailable } from "../src/translations.js";
 
-module.exports = async (req, res) => {
+dotenv.config();
+
+export default async (req, res) => {
   const {
     username,
     hide,
@@ -87,6 +89,7 @@ module.exports = async (req, res) => {
       }),
     );
   } catch (err) {
+    res.setHeader("Cache-Control", `no-cache, no-store, must-revalidate`); // Don't cache error responses.
     return res.send(renderError(err.message, err.secondaryMessage));
   }
 };
